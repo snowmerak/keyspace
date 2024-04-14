@@ -1,6 +1,7 @@
 package keyspace
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 	"sync/atomic"
@@ -46,8 +47,13 @@ func (k *Keyspace) Query(action func(session *gocql.Session) error) error {
 		}
 
 		if err := action(sess); err != nil {
-			whenFailed(err)
-			continue
+			switch {
+			case errors.Is(err, gocql.ErrHostAlreadyExists):
+				whenFailed(err)
+				continue
+			default:
+				return fmt.Errorf("failed to execute query: %v", err)
+			}
 		}
 
 		return nil
