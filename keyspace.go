@@ -97,3 +97,12 @@ func (k *Keyspace) closureWhenFailed(i int64) func(error) {
 		k.sessions[i].Store(cs)
 	}
 }
+
+func (k *Keyspace) Close() {
+	for _, sess := range k.sessions {
+		s := sess.Load()
+		if s != nil {
+			s.Close()
+		}
+	}
+}
