@@ -99,8 +99,8 @@ func (k *Keyspace) closureWhenFailed(i int64) func(error) {
 }
 
 func (k *Keyspace) Close() {
-	for _, sess := range k.sessions {
-		s := sess.Load()
+	for i := range k.sessions {
+		s := k.sessions[i].Load()
 		if s != nil {
 			s.Close()
 		}
