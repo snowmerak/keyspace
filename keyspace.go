@@ -48,7 +48,7 @@ func (k *Keyspace) Query(action func(session *gocql.Session) error) error {
 
 		if err := action(sess); err != nil {
 			switch {
-			case errors.Is(err, gocql.ErrHostAlreadyExists):
+			case errors.Is(err, gocql.ErrHostAlreadyExists), errors.Is(err, gocql.ErrNoConnections), errors.Is(err, gocql.ErrNoStreams), errors.Is(err, gocql.ErrUnavailable), errors.Is(err, gocql.ErrTooManyTimeouts), errors.Is(err, gocql.ErrTimeoutNoResponse):
 				whenFailed(err)
 				continue
 			default:
